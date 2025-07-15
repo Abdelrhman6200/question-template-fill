@@ -52,6 +52,11 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// ISKY TECH Brand Colors
+				'brand-blue': 'hsl(var(--brand-blue))',
+				'brand-orange': 'hsl(var(--brand-orange))',
+				'brand-light-blue': 'hsl(var(--brand-light-blue))',
+				'brand-navy': 'hsl(var(--brand-navy))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
