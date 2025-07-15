@@ -106,10 +106,4 @@
   body {
     @apply bg-background text-foreground;
   }
-  
-  /* Custom utility classes for ISKY TECH template */
-  .writing-mode-vertical {
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-  }
 }
