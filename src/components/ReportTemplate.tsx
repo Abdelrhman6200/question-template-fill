@@ -83,276 +83,251 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8 bg-gradient-to-br from-brand-light-blue/20 to-background">
+    <div className="max-w-6xl mx-auto p-6 space-y-8 bg-gradient-to-br from-brand-light-blue/20 to-background print:max-w-none print:p-2 print:space-y-3">
       {/* Header */}
-      <div className="text-center space-y-4 bg-gradient-to-r from-brand-navy to-brand-blue text-white p-8 rounded-lg">
+      <div className="text-center space-y-4 bg-gradient-to-r from-brand-navy to-brand-blue text-white p-8 rounded-lg print:p-3 print:space-y-1">
         <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-brand-orange rounded-lg flex items-center justify-center">
-            <GraduationCap className="h-8 w-8 text-white" />
+          <div className="w-12 h-12 bg-brand-orange rounded-lg flex items-center justify-center print:w-6 print:h-6">
+            <GraduationCap className="h-8 w-8 text-white print:h-4 print:w-4" />
           </div>
-          <h1 className="text-4xl font-bold">ISKY TECH</h1>
+          <h1 className="text-4xl font-bold print:text-lg">ISKY TECH</h1>
         </div>
-        <h2 className="text-3xl font-semibold text-brand-orange">Session Progress Report</h2>
-        <p className="text-xl opacity-90">{formatDate(data.sessionDate)}</p>
+        <h2 className="text-3xl font-semibold text-brand-orange print:text-base">Session Progress Report</h2>
+        <p className="text-xl opacity-90 print:text-sm">{formatDate(data.sessionDate)}</p>
       </div>
 
-      {/* Student Information */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center gap-4">
-              <User className="h-6 w-6 text-brand-navy" />
-              <div>
-                <p className="text-brand-blue font-semibold">Name:</p>
-                <p className="text-2xl font-bold text-brand-navy">{data.studentName}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <GraduationCap className="h-6 w-6 text-brand-navy" />
-              <div>
-                <p className="text-brand-blue font-semibold">Instructor</p>
-                <p className="text-xl font-bold text-brand-navy">{data.instructorName}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
-              <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-brand-blue" />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
+        {/* Student Information */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:gap-2">
+            <div className="space-y-4 print:space-y-2">
+              <div className="flex items-center gap-4 print:gap-2">
+                <User className="h-6 w-6 text-brand-navy print:h-4 print:w-4" />
                 <div>
-                  <p className="text-brand-blue font-semibold">Track</p>
-                  <p className="font-bold text-brand-navy">{data.track}</p>
+                  <p className="text-brand-blue font-semibold print:text-xs">Name:</p>
+                  <p className="text-lg font-bold text-brand-navy print:text-sm">{data.studentName}</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <Hash className="h-5 w-5 text-brand-blue" />
+              <div className="flex items-center gap-4 print:gap-2">
+                <GraduationCap className="h-6 w-6 text-brand-navy print:h-4 print:w-4" />
                 <div>
-                  <p className="text-brand-blue font-semibold">Session Number</p>
-                  <p className="font-bold text-brand-navy">{data.sessionNumber}</p>
+                  <p className="text-brand-blue font-semibold print:text-xs">Instructor</p>
+                  <p className="text-lg font-bold text-brand-navy print:text-sm">{data.instructorName}</p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-brand-blue" />
-                <div>
-                  <p className="text-brand-blue font-semibold">Session Date</p>
-                  <p className="font-bold text-brand-navy">{formatDate(data.sessionDate)}</p>
+
+              <div className="space-y-2 pt-2 border-t border-gray-200 print:pt-1 print:space-y-1">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-brand-blue" />
+                  <p className="text-xs text-brand-blue font-semibold">Track: <span className="text-brand-navy">{data.track}</span></p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-brand-blue" />
+                  <p className="text-xs text-brand-blue font-semibold">Session: <span className="text-brand-navy">{data.sessionNumber}</span></p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-brand-blue" />
+                  <p className="text-xs text-brand-blue font-semibold">Date: <span className="text-brand-navy">{formatDate(data.sessionDate)}</span></p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-center bg-brand-light-blue/30 rounded-lg p-6">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-4">
-                <User className="h-12 w-12 bg-brand-orange text-white rounded-full p-2" />
+            <div className="flex items-center justify-center bg-brand-light-blue/30 rounded-lg p-4 print:p-2">
+              <div className="text-center">
+                <User className="h-8 w-8 bg-brand-orange text-white rounded-full p-1 mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
+                <h3 className="text-sm font-bold text-brand-blue print:text-xs">STUDENT INFO</h3>
               </div>
-              <h3 className="text-2xl font-bold text-brand-blue">STUDENT</h3>
-              <h3 className="text-2xl font-bold text-brand-blue">INFORMATION</h3>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Performance Section */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="bg-brand-light-blue/30 rounded-lg p-6 flex flex-col items-center justify-center">
-            <TrendingUp className="h-16 w-16 text-brand-blue mb-4" />
-            <h3 className="text-2xl font-bold text-brand-orange text-center">STUDENT'S</h3>
-            <h3 className="text-2xl font-bold text-brand-orange text-center">PERFORMANCE</h3>
-            <h3 className="text-2xl font-bold text-brand-orange text-center">THIS SESSION</h3>
-          </div>
-
-          <div className="lg:col-span-2 space-y-6">
-            <div className="text-center">
-              <h4 className="text-2xl font-bold text-brand-orange mb-4">Quality Percentage</h4>
-              <div className="flex justify-center mb-4">
-                <CircularProgress percentage={data.qualityPercentage} />
-              </div>
-              <p className="text-lg font-semibold text-brand-navy">
-                The student scored {data.qualityPercentage}% in today's session.
-              </p>
+        {/* Performance Section */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:gap-2">
+            <div className="bg-brand-light-blue/30 rounded-lg p-4 flex flex-col items-center justify-center print:p-2">
+              <TrendingUp className="h-12 w-12 text-brand-blue mb-2 print:h-6 print:w-6 print:mb-1" />
+              <h3 className="text-sm font-bold text-brand-orange text-center print:text-xs">PERFORMANCE</h3>
             </div>
 
-            <div className="space-y-4">
-              {data.performanceNotes.filter(note => note.trim()).map((note, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-brand-blue text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">
-                    ○
+            <div className="space-y-4 print:space-y-2">
+              <div className="text-center">
+                <h4 className="text-lg font-bold text-brand-orange mb-2 print:text-sm print:mb-1">Quality: {data.qualityPercentage}%</h4>
+                <div className="flex justify-center">
+                  <div className="relative w-16 h-16 print:w-12 print:h-12">
+                    <div className="w-16 h-16 bg-brand-blue rounded-full flex items-center justify-center text-white font-bold print:w-12 print:h-12 print:text-xs">
+                      {data.qualityPercentage}%
+                    </div>
                   </div>
-                  <p className="text-brand-navy">{note}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Progress Section */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="text-center mb-8">
-          <h3 className="text-3xl font-bold text-brand-orange">PROGRESS SINCE LAST SESSION</h3>
-        </div>
-        
-        <div className="space-y-6">
-          {[data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(point => point.trim()).map((point, index) => (
-            <div key={index} className="flex items-start gap-4 p-4 bg-brand-light-blue/20 rounded-lg">
-              <div className="w-12 h-12 bg-brand-orange text-white rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0">
-                {index + 1}
               </div>
-              <p className="text-brand-navy text-lg pt-2">{point}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
 
-      {/* Strength Highlights */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="text-center mb-8">
-          <h3 className="text-3xl font-bold text-brand-orange">Strength Highlight</h3>
-        </div>
-        
-        <div className="text-center space-y-6">
-          <p className="text-lg text-brand-navy leading-relaxed">{data.strengthText}</p>
-          
-          <div className="flex justify-center items-center gap-8 pt-8">
-            <div className="text-center">
-              <AlertCircle className="h-12 w-12 text-brand-navy mx-auto mb-2" />
-              <p className="font-bold text-brand-navy">Problem</p>
-              <p className="font-bold text-brand-navy">Identification</p>
-            </div>
-            
-            <div className="w-8 h-0.5 bg-brand-orange"></div>
-            
-            <div className="text-center">
-              <CheckCircle className="h-12 w-12 text-brand-navy mx-auto mb-2" />
-              <p className="font-bold text-brand-navy">Troubleshooting</p>
-            </div>
-            
-            <div className="w-8 h-0.5 bg-brand-orange"></div>
-            
-            <div className="text-center">
-              <Lightbulb className="h-12 w-12 text-brand-navy mx-auto mb-2" />
-              <p className="font-bold text-brand-navy">Independent</p>
-              <p className="font-bold text-brand-navy">Solution</p>
+              <div className="space-y-2 print:space-y-1">
+                {data.performanceNotes.filter(note => note.trim()).slice(0, 2).map((note, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <div className="w-4 h-4 bg-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                      ○
+                    </div>
+                    <p className="text-brand-navy text-xs">{note}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
 
-      {/* Areas of Improvement */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="text-center mb-8">
-          <h3 className="text-3xl font-bold text-brand-blue">Areas of improvement</h3>
-        </div>
-        
-        <div className="space-y-6">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-brand-navy flex-shrink-0 mt-1" />
-            <div>
-              <p className="text-brand-navy leading-relaxed">{data.improvementIssue}</p>
-            </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 print:gap-2">
+        {/* Progress Section */}
+        <Card className="xl:col-span-2 p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="text-center mb-4 print:mb-2">
+            <h3 className="text-xl font-bold text-brand-orange print:text-sm">PROGRESS SINCE LAST SESSION</h3>
           </div>
           
-          <div className="flex items-start gap-4">
-            <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
-            <div>
-              <p className="text-brand-navy leading-relaxed">{data.improvementSolution}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <h4 className="text-2xl font-bold text-brand-orange text-center mb-6">Communication Tips:</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[data.tip1, data.tip2, data.tip3].filter(tip => tip.trim()).map((tip, index) => (
-              <div key={index} className="text-center">
-                <div className="w-12 h-12 bg-brand-orange text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+          <div className="space-y-3 print:space-y-1">
+            {[data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(point => point.trim()).map((point, index) => (
+              <div key={index} className="flex items-start gap-3 p-3 bg-brand-light-blue/20 rounded-lg print:gap-2 print:p-2">
+                <div className="w-8 h-8 bg-brand-orange text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 print:w-6 print:h-6 print:text-xs">
                   {index + 1}
                 </div>
-                <p className="text-brand-navy font-semibold">{tip}</p>
+                <p className="text-brand-navy text-sm pt-1 print:text-xs print:pt-0">{point}</p>
               </div>
             ))}
           </div>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Project Section */}
-      {data.projectTitle && (
-        <Card className="p-8 bg-white border-2 border-brand-light-blue">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="bg-brand-light-blue/30 rounded-lg p-6 flex flex-col items-center justify-center">
-              <Code className="h-16 w-16 text-brand-orange mb-4" />
-              <h3 className="text-2xl font-bold text-brand-orange text-center">PROJECT</h3>
-              <h3 className="text-2xl font-bold text-brand-orange text-center">SCREENSHOT</h3>
+        {/* Strength Highlights */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="text-center mb-4 print:mb-2">
+            <h3 className="text-xl font-bold text-brand-orange print:text-sm">Strength Highlight</h3>
+          </div>
+          
+          <div className="text-center space-y-4 print:space-y-2">
+            <p className="text-sm text-brand-navy leading-relaxed print:text-xs">{data.strengthText}</p>
+            
+            <div className="flex justify-center items-center gap-4 print:gap-2">
+              <div className="text-center">
+                <AlertCircle className="h-8 w-8 text-brand-navy mx-auto mb-1 print:h-6 print:w-6" />
+                <p className="font-bold text-brand-navy text-xs print:text-xs">Problem</p>
+              </div>
+              
+              <div className="w-4 h-0.5 bg-brand-orange print:w-2"></div>
+              
+              <div className="text-center">
+                <CheckCircle className="h-8 w-8 text-brand-navy mx-auto mb-1 print:h-6 print:w-6" />
+                <p className="font-bold text-brand-navy text-xs print:text-xs">Solution</p>
+              </div>
             </div>
+          </div>
+        </Card>
+      </div>
 
-            <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
+        {/* Areas of Improvement */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="text-center mb-4 print:mb-2">
+            <h3 className="text-xl font-bold text-brand-blue print:text-sm">Areas of improvement</h3>
+          </div>
+          
+          <div className="space-y-4 print:space-y-2">
+            <div className="flex items-start gap-3 print:gap-2">
+              <AlertCircle className="h-5 w-5 text-brand-navy flex-shrink-0 mt-0.5 print:h-4 print:w-4" />
+              <p className="text-brand-navy text-sm print:text-xs">{data.improvementIssue}</p>
+            </div>
+            
+            <div className="flex items-start gap-3 print:gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5 print:h-4 print:w-4" />
+              <p className="text-brand-navy text-sm print:text-xs">{data.improvementSolution}</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Communication Tips */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="text-center mb-4 print:mb-2">
+            <h3 className="text-xl font-bold text-brand-orange print:text-sm">Communication Tips</h3>
+          </div>
+          
+          <div className="space-y-3 print:space-y-1">
+            {[data.tip1, data.tip2, data.tip3].filter(tip => tip.trim()).map((tip, index) => (
+              <div key={index} className="flex items-start gap-3 print:gap-2">
+                <div className="w-6 h-6 bg-brand-orange text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 print:w-5 print:h-5 print:text-xs">
+                  {index + 1}
+                </div>
+                <p className="text-brand-navy text-sm pt-0.5 print:text-xs print:pt-0">{tip}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
+        {/* Project Section */}
+        {data.projectTitle && (
+          <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+            <div className="space-y-4 print:space-y-2">
+              <div className="text-center">
+                <Code className="h-8 w-8 text-brand-orange mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
+                <h3 className="text-lg font-bold text-brand-orange print:text-sm">PROJECT</h3>
+              </div>
+
               <div>
-                <h4 className="text-2xl font-bold text-brand-blue mb-4">{data.projectTitle}:</h4>
-                <div className="space-y-3">
-                  <p className="text-brand-navy">1. {data.studentName} worked on an AI-driven task using {data.projectTitle}.</p>
-                  <p className="text-brand-navy">2. He implemented basic logic using AI input and generated output based on user interaction.</p>
-                  <p className="text-brand-navy">3. The code was debugged and functioned properly, though with instructor support.</p>
+                <h4 className="text-lg font-bold text-brand-blue mb-2 print:text-sm print:mb-1">{data.projectTitle}</h4>
+                <div className="space-y-2 print:space-y-1">
+                  <p className="text-brand-navy text-sm print:text-xs">1. {data.studentName} worked on {data.projectTitle}.</p>
+                  <p className="text-brand-navy text-sm print:text-xs">2. Implemented basic logic with AI input/output.</p>
+                  <p className="text-brand-navy text-sm print:text-xs">3. Code debugged with instructor support.</p>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xl font-bold text-brand-blue mb-4">Key Features Implemented:</h4>
-                <div className="space-y-2">
-                  {data.projectFeatures.filter(feature => feature.trim()).map((feature, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-brand-blue text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">
+                <h4 className="text-base font-bold text-brand-blue mb-2 print:text-xs print:mb-1">Key Features:</h4>
+                <div className="space-y-1">
+                  {data.projectFeatures.filter(feature => feature.trim()).slice(0, 3).map((feature, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <div className="w-4 h-4 bg-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
                         ○
                       </div>
-                      <p className="text-brand-navy">{feature}</p>
+                      <p className="text-brand-navy text-sm print:text-xs">{feature}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
+          </Card>
+        )}
+
+        {/* Parent Recommendations */}
+        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
+          <div className="space-y-4 print:space-y-2">
+            <div className="text-center">
+              <Users className="h-8 w-8 text-brand-orange mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
+              <h3 className="text-lg font-bold text-brand-orange print:text-sm">PARENT RECOMMENDATION</h3>
+            </div>
+            <p className="text-sm text-brand-navy leading-relaxed print:text-xs">{data.recommendations}</p>
           </div>
         </Card>
-      )}
-
-      {/* Parent Recommendations */}
-      <Card className="p-8 bg-white border-2 border-brand-light-blue">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-4">
-            <p className="text-lg text-brand-navy leading-relaxed">{data.recommendations}</p>
-          </div>
-          
-          <div className="bg-brand-light-blue/30 rounded-lg p-6 flex flex-col items-center justify-center">
-            <Users className="h-16 w-16 text-brand-orange mb-4" />
-            <h3 className="text-2xl font-bold text-brand-orange text-center">PARENT</h3>
-            <h3 className="text-2xl font-bold text-brand-orange text-center">RECOMMENDATION</h3>
-          </div>
-        </div>
-      </Card>
+      </div>
 
       {/* Footer */}
-      <Card className="p-8 bg-gradient-to-r from-brand-navy to-brand-blue text-white text-center">
-        <div className="space-y-4">
-          <p className="text-2xl font-semibold text-brand-orange">
+      <Card className="p-6 bg-gradient-to-r from-brand-navy to-brand-blue text-white text-center print:p-3">
+        <div className="space-y-3 print:space-y-2">
+          <p className="text-lg font-semibold text-brand-orange print:text-sm">
             "Thank you for your trust in our educational program."
           </p>
           
-          <div className="flex items-center justify-center gap-3 pt-4">
-            <div className="w-12 h-12 bg-brand-orange rounded-lg flex items-center justify-center">
-              <GraduationCap className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center gap-3 print:gap-2">
+            <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center print:w-6 print:h-6">
+              <GraduationCap className="h-6 w-6 text-white print:h-4 print:w-4" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold">ISKY TECH</h3>
-              <p className="text-sm opacity-80">EMPOWERING INNOVATORS</p>
+              <h3 className="text-lg font-bold print:text-sm">ISKY TECH</h3>
+              <p className="text-xs opacity-80">EMPOWERING INNOVATORS</p>
             </div>
           </div>
           
-          <div className="pt-4 border-t border-white/20">
-            <p className="text-lg font-semibold">Report Prepared by</p>
-            <p className="text-brand-orange font-bold">Quality Control Team</p>
+          <div className="pt-2 border-t border-white/20 print:pt-1">
+            <p className="text-sm font-semibold print:text-xs">Report Prepared by Quality Control Team</p>
           </div>
         </div>
       </Card>
