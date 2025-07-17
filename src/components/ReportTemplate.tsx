@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users, Download } from "lucide-react";
 
 interface ReportData {
   studentName: string;
@@ -38,6 +39,10 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  const handleDownload = () => {
+    window.print();
   };
 
   const CircularProgress = ({ percentage }: { percentage: number }) => {
@@ -352,14 +357,24 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
         </div>
       </Card>
 
-      {/* Action Button */}
-      <div className="text-center">
-        <button
-          onClick={onBack}
-          className="bg-brand-orange hover:bg-brand-navy text-white px-8 py-3 rounded-lg font-semibold text-lg transition-colors"
-        >
-          Create New Report
-        </button>
+      {/* Action Buttons */}
+      <div className="text-center space-y-4 print:hidden">
+        <div className="flex justify-center gap-4">
+          <Button
+            onClick={handleDownload}
+            className="bg-brand-blue hover:bg-brand-navy text-white px-8 py-3 text-lg"
+          >
+            <Download className="mr-2 h-5 w-5" />
+            Download Report
+          </Button>
+          <Button
+            onClick={onBack}
+            variant="outline"
+            className="border-brand-orange text-brand-orange hover:bg-brand-orange hover:text-white px-8 py-3 text-lg"
+          >
+            Create New Report
+          </Button>
+        </div>
       </div>
     </div>
   );
