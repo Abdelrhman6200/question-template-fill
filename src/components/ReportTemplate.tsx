@@ -229,27 +229,27 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
       <div className="report-page">
         <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Strengths & Areas of Improvement</h2>
         <div className="grid grid-cols-2 gap-8 h-full">
-          <div className="bg-green-50 p-6 rounded-xl">
+          <div className="bg-brand-light-blue/30 p-6 rounded-xl">
             <div className="text-center mb-6">
-              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-green-700">Strength Highlight</h3>
+              <CheckCircle className="h-12 w-12 text-brand-navy mx-auto mb-2" />
+              <h3 className="text-2xl font-bold text-brand-orange">Strength Highlight</h3>
             </div>
-            <p className="text-gray-700 text-lg leading-relaxed">{data.strengthText}</p>
+            <p className="text-brand-navy text-lg leading-relaxed">{data.strengthText}</p>
           </div>
           
-          <div className="bg-blue-50 p-6 rounded-xl">
+          <div className="bg-brand-light-blue/20 p-6 rounded-xl">
             <div className="text-center mb-6">
               <AlertCircle className="h-12 w-12 text-brand-blue mx-auto mb-2" />
               <h3 className="text-2xl font-bold text-brand-blue">Area for Improvement</h3>
             </div>
             <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold text-red-600 mb-2">Issue:</h4>
-                <p className="text-gray-700">{data.improvementIssue}</p>
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-brand-navy flex-shrink-0 mt-0.5" />
+                <p className="text-brand-navy">{data.improvementIssue}</p>
               </div>
-              <div>
-                <h4 className="font-semibold text-green-600 mb-2">Solution:</h4>
-                <p className="text-gray-700">{data.improvementSolution}</p>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-brand-navy flex-shrink-0 mt-0.5" />
+                <p className="text-brand-navy">{data.improvementSolution}</p>
               </div>
             </div>
           </div>
@@ -334,14 +334,14 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
         <div className="flex justify-center gap-4">
           <Button
             onClick={handlePDFDownload}
-            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
+            className="bg-brand-blue hover:bg-brand-navy text-white px-8 py-3 text-lg"
           >
             <FileText className="mr-2 h-5 w-5" />
             Download PDF
           </Button>
           <Button
             onClick={handlePowerPointDownload}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg"
+            className="bg-brand-orange hover:bg-brand-navy text-white px-8 py-3 text-lg"
           >
             <Presentation className="mr-2 h-5 w-5" />
             Download PowerPoint
