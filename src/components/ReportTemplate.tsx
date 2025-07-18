@@ -1,7 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users, Download } from "lucide-react";
+import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users, Download, FileText, Presentation } from "lucide-react";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import pptxgen from 'pptxgenjs';
 
 interface ReportData {
   studentName: string;
@@ -23,6 +26,7 @@ interface ReportData {
   projectTitle: string;
   projectFeatures: string[];
   recommendations: string;
+  studentPhoto?: string;
 }
 
 interface ReportTemplateProps {
@@ -41,306 +45,306 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
     });
   };
 
-  const handleDownload = () => {
-    window.print();
+  const handlePDFDownload = async () => {
+    const pages = document.querySelectorAll('.report-page');
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    for (let i = 0; i < pages.length; i++) {
+      const canvas = await html2canvas(pages[i] as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 297; // A4 width in mm (landscape)
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    }
+
+    pdf.save(`${data.studentName}_Session_Report.pdf`);
   };
 
-  const CircularProgress = ({ percentage }: { percentage: number }) => {
-    const radius = 45;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDasharray = circumference;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const handlePowerPointDownload = async () => {
+    const pres = new pptxgen();
+    pres.layout = 'LAYOUT_16x9';
 
-    return (
-      <div className="relative w-32 h-32">
-        <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth="8"
-            fill="transparent"
-            className="text-gray-200"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            stroke="currentColor"
-            strokeWidth="8"
-            fill="transparent"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            className="text-brand-blue transition-all duration-300 ease-in-out"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-brand-navy">{percentage}%</span>
-        </div>
-      </div>
-    );
+    // Page 1: Title Page
+    const slide1 = pres.addSlide();
+    slide1.background = { color: '1B2951' };
+    slide1.addText('ISKY TECH', { x: 1, y: 1, w: 8, h: 1, fontSize: 44, color: 'FFFFFF', bold: true, align: 'center' });
+    slide1.addText('Session Progress Report', { x: 1, y: 2.5, w: 8, h: 1, fontSize: 32, color: 'FF9B47', bold: true, align: 'center' });
+    slide1.addText(data.studentName, { x: 1, y: 4, w: 8, h: 1, fontSize: 28, color: 'FFFFFF', align: 'center' });
+    slide1.addText(formatDate(data.sessionDate), { x: 1, y: 4.8, w: 8, h: 0.8, fontSize: 20, color: 'CCCCCC', align: 'center' });
+
+    // Page 2: Student Information & Performance
+    const slide2 = pres.addSlide();
+    slide2.addText('Student Information & Performance', { x: 0.5, y: 0.3, w: 9, h: 0.8, fontSize: 28, color: '1B2951', bold: true });
+    slide2.addText(`Student: ${data.studentName}`, { x: 0.5, y: 1.2, w: 4, h: 0.5, fontSize: 16, color: '333333' });
+    slide2.addText(`Instructor: ${data.instructorName}`, { x: 0.5, y: 1.8, w: 4, h: 0.5, fontSize: 16, color: '333333' });
+    slide2.addText(`Track: ${data.track}`, { x: 0.5, y: 2.4, w: 4, h: 0.5, fontSize: 16, color: '333333' });
+    slide2.addText(`Session: ${data.sessionNumber}`, { x: 0.5, y: 3, w: 4, h: 0.5, fontSize: 16, color: '333333' });
+    slide2.addText(`Quality: ${data.qualityPercentage}%`, { x: 5.5, y: 1.5, w: 3, h: 1.5, fontSize: 32, color: '0080CC', bold: true, align: 'center' });
+
+    // Page 3: Progress Points
+    const slide3 = pres.addSlide();
+    slide3.addText('Progress Since Last Session', { x: 0.5, y: 0.3, w: 9, h: 0.8, fontSize: 28, color: '1B2951', bold: true });
+    const progressPoints = [data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(p => p.trim());
+    progressPoints.forEach((point, index) => {
+      slide3.addText(`${index + 1}. ${point}`, { x: 0.5, y: 1.5 + (index * 1.2), w: 9, h: 1, fontSize: 16, color: '333333' });
+    });
+
+    // Page 4: Strengths & Areas of Improvement
+    const slide4 = pres.addSlide();
+    slide4.addText('Strengths & Areas of Improvement', { x: 0.5, y: 0.3, w: 9, h: 0.8, fontSize: 28, color: '1B2951', bold: true });
+    slide4.addText('Strength Highlight:', { x: 0.5, y: 1.2, w: 4, h: 0.5, fontSize: 18, color: 'FF9B47', bold: true });
+    slide4.addText(data.strengthText, { x: 0.5, y: 1.8, w: 4, h: 2, fontSize: 14, color: '333333' });
+    slide4.addText('Area for Improvement:', { x: 5, y: 1.2, w: 4, h: 0.5, fontSize: 18, color: '0080CC', bold: true });
+    slide4.addText(data.improvementIssue, { x: 5, y: 1.8, w: 4, h: 1, fontSize: 14, color: '333333' });
+    slide4.addText(data.improvementSolution, { x: 5, y: 2.8, w: 4, h: 1, fontSize: 14, color: '333333' });
+
+    // Page 5: Communication Tips & Project
+    const slide5 = pres.addSlide();
+    slide5.addText('Communication Tips & Project Details', { x: 0.5, y: 0.3, w: 9, h: 0.8, fontSize: 28, color: '1B2951', bold: true });
+    const tips = [data.tip1, data.tip2, data.tip3].filter(t => t.trim());
+    slide5.addText('Communication Tips:', { x: 0.5, y: 1.2, w: 4, h: 0.5, fontSize: 18, color: 'FF9B47', bold: true });
+    tips.forEach((tip, index) => {
+      slide5.addText(`• ${tip}`, { x: 0.5, y: 1.8 + (index * 0.4), w: 4, h: 0.3, fontSize: 12, color: '333333' });
+    });
+    
+    if (data.projectTitle) {
+      slide5.addText('Project:', { x: 5, y: 1.2, w: 4, h: 0.5, fontSize: 18, color: '0080CC', bold: true });
+      slide5.addText(data.projectTitle, { x: 5, y: 1.8, w: 4, h: 0.5, fontSize: 14, color: '333333', bold: true });
+    }
+
+    // Page 6: Recommendations
+    const slide6 = pres.addSlide();
+    slide6.addText('Parent Recommendations', { x: 0.5, y: 0.3, w: 9, h: 0.8, fontSize: 28, color: '1B2951', bold: true });
+    slide6.addText(data.recommendations, { x: 0.5, y: 1.5, w: 9, h: 3, fontSize: 16, color: '333333' });
+
+    pres.writeFile({ fileName: `${data.studentName}_Session_Report.pptx` });
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8 bg-gradient-to-br from-brand-light-blue/20 to-background print:max-w-none print:p-2 print:space-y-3">
-      {/* Header */}
-      <div className="text-center space-y-4 bg-gradient-to-r from-brand-navy to-brand-blue text-white p-8 rounded-lg print:p-3 print:space-y-1">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-brand-orange rounded-lg flex items-center justify-center print:w-6 print:h-6">
-            <GraduationCap className="h-8 w-8 text-white print:h-4 print:w-4" />
+    <div className="space-y-8 bg-gray-50 min-h-screen py-8">
+      {/* Page 1: Title Page */}
+      <div className="report-page bg-gradient-to-br from-brand-navy to-brand-blue text-white">
+        <div className="flex flex-col items-center justify-center h-full space-y-8">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 bg-brand-orange rounded-2xl flex items-center justify-center">
+              <GraduationCap className="h-12 w-12 text-white" />
+            </div>
+            <h1 className="text-6xl font-bold">ISKY TECH</h1>
           </div>
-          <h1 className="text-4xl font-bold print:text-lg">ISKY TECH</h1>
+          <h2 className="text-4xl font-semibold text-brand-orange">Session Progress Report</h2>
+          <div className="text-center space-y-4">
+            <h3 className="text-3xl font-bold">{data.studentName}</h3>
+            <p className="text-xl opacity-90">{formatDate(data.sessionDate)}</p>
+          </div>
         </div>
-        <h2 className="text-3xl font-semibold text-brand-orange print:text-base">Session Progress Report</h2>
-        <p className="text-xl opacity-90 print:text-sm">{formatDate(data.sessionDate)}</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
-        {/* Student Information */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:gap-2">
-            <div className="space-y-4 print:space-y-2">
-              <div className="flex items-center gap-4 print:gap-2">
-                <User className="h-6 w-6 text-brand-navy print:h-4 print:w-4" />
-                <div>
-                  <p className="text-brand-blue font-semibold print:text-xs">Name:</p>
-                  <p className="text-lg font-bold text-brand-navy print:text-sm">{data.studentName}</p>
-                </div>
+      {/* Page 2: Student Information & Performance */}
+      <div className="report-page">
+        <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Student Information & Performance</h2>
+        <div className="grid grid-cols-2 gap-8 h-full">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              {data.studentPhoto ? (
+                <img 
+                  src={data.studentPhoto} 
+                  alt="Student" 
+                  className="w-20 h-20 rounded-full object-cover border-4 border-brand-light-blue"
+                />
+              ) : (
+                <User className="w-20 h-20 p-4 bg-brand-light-blue text-brand-navy rounded-full" />
+              )}
+              <div>
+                <p className="text-lg font-semibold text-brand-blue">Student Name</p>
+                <p className="text-2xl font-bold text-brand-navy">{data.studentName}</p>
               </div>
-              
-              <div className="flex items-center gap-4 print:gap-2">
-                <GraduationCap className="h-6 w-6 text-brand-navy print:h-4 print:w-4" />
-                <div>
-                  <p className="text-brand-blue font-semibold print:text-xs">Instructor</p>
-                  <p className="text-lg font-bold text-brand-navy print:text-sm">{data.instructorName}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2 pt-2 border-t border-gray-200 print:pt-1 print:space-y-1">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-brand-blue" />
-                  <p className="text-xs text-brand-blue font-semibold">Track: <span className="text-brand-navy">{data.track}</span></p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Hash className="h-4 w-4 text-brand-blue" />
-                  <p className="text-xs text-brand-blue font-semibold">Session: <span className="text-brand-navy">{data.sessionNumber}</span></p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-brand-blue" />
-                  <p className="text-xs text-brand-blue font-semibold">Date: <span className="text-brand-navy">{formatDate(data.sessionDate)}</span></p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center bg-brand-light-blue/30 rounded-lg p-4 print:p-2">
-              <div className="text-center">
-                <User className="h-8 w-8 bg-brand-orange text-white rounded-full p-1 mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
-                <h3 className="text-sm font-bold text-brand-blue print:text-xs">STUDENT INFO</h3>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Performance Section */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 print:gap-2">
-            <div className="bg-brand-light-blue/30 rounded-lg p-4 flex flex-col items-center justify-center print:p-2">
-              <TrendingUp className="h-12 w-12 text-brand-blue mb-2 print:h-6 print:w-6 print:mb-1" />
-              <h3 className="text-sm font-bold text-brand-orange text-center print:text-xs">PERFORMANCE</h3>
-            </div>
-
-            <div className="space-y-4 print:space-y-2">
-              <div className="text-center">
-                <h4 className="text-lg font-bold text-brand-orange mb-2 print:text-sm print:mb-1">Quality: {data.qualityPercentage}%</h4>
-                <div className="flex justify-center">
-                  <div className="relative w-16 h-16 print:w-12 print:h-12">
-                    <div className="w-16 h-16 bg-brand-blue rounded-full flex items-center justify-center text-white font-bold print:w-12 print:h-12 print:text-xs">
-                      {data.qualityPercentage}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2 print:space-y-1">
-                {data.performanceNotes.filter(note => note.trim()).slice(0, 2).map((note, index) => (
-                  <div key={index} className="flex items-start gap-2">
-                    <div className="w-4 h-4 bg-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                      ○
-                    </div>
-                    <p className="text-brand-navy text-xs">{note}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 print:gap-2">
-        {/* Progress Section */}
-        <Card className="xl:col-span-2 p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="text-center mb-4 print:mb-2">
-            <h3 className="text-xl font-bold text-brand-orange print:text-sm">PROGRESS SINCE LAST SESSION</h3>
-          </div>
-          
-          <div className="space-y-3 print:space-y-1">
-            {[data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(point => point.trim()).map((point, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-brand-light-blue/20 rounded-lg print:gap-2 print:p-2">
-                <div className="w-8 h-8 bg-brand-orange text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 print:w-6 print:h-6 print:text-xs">
-                  {index + 1}
-                </div>
-                <p className="text-brand-navy text-sm pt-1 print:text-xs print:pt-0">{point}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Strength Highlights */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="text-center mb-4 print:mb-2">
-            <h3 className="text-xl font-bold text-brand-orange print:text-sm">Strength Highlight</h3>
-          </div>
-          
-          <div className="text-center space-y-4 print:space-y-2">
-            <p className="text-sm text-brand-navy leading-relaxed print:text-xs">{data.strengthText}</p>
-            
-            <div className="flex justify-center items-center gap-4 print:gap-2">
-              <div className="text-center">
-                <AlertCircle className="h-8 w-8 text-brand-navy mx-auto mb-1 print:h-6 print:w-6" />
-                <p className="font-bold text-brand-navy text-xs print:text-xs">Problem</p>
-              </div>
-              
-              <div className="w-4 h-0.5 bg-brand-orange print:w-2"></div>
-              
-              <div className="text-center">
-                <CheckCircle className="h-8 w-8 text-brand-navy mx-auto mb-1 print:h-6 print:w-6" />
-                <p className="font-bold text-brand-navy text-xs print:text-xs">Solution</p>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
-        {/* Areas of Improvement */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="text-center mb-4 print:mb-2">
-            <h3 className="text-xl font-bold text-brand-blue print:text-sm">Areas of improvement</h3>
-          </div>
-          
-          <div className="space-y-4 print:space-y-2">
-            <div className="flex items-start gap-3 print:gap-2">
-              <AlertCircle className="h-5 w-5 text-brand-navy flex-shrink-0 mt-0.5 print:h-4 print:w-4" />
-              <p className="text-brand-navy text-sm print:text-xs">{data.improvementIssue}</p>
             </div>
             
-            <div className="flex items-start gap-3 print:gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5 print:h-4 print:w-4" />
-              <p className="text-brand-navy text-sm print:text-xs">{data.improvementSolution}</p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <GraduationCap className="h-8 w-8 text-brand-navy" />
+                <div>
+                  <p className="text-brand-blue font-semibold">Instructor</p>
+                  <p className="text-xl font-bold text-brand-navy">{data.instructorName}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <MapPin className="h-8 w-8 text-brand-navy" />
+                <div>
+                  <p className="text-brand-blue font-semibold">Track</p>
+                  <p className="text-xl font-bold text-brand-navy">{data.track}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <Hash className="h-8 w-8 text-brand-navy" />
+                <div>
+                  <p className="text-brand-blue font-semibold">Session Number</p>
+                  <p className="text-xl font-bold text-brand-navy">{data.sessionNumber}</p>
+                </div>
+              </div>
             </div>
           </div>
-        </Card>
-
-        {/* Communication Tips */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="text-center mb-4 print:mb-2">
-            <h3 className="text-xl font-bold text-brand-orange print:text-sm">Communication Tips</h3>
-          </div>
           
-          <div className="space-y-3 print:space-y-1">
-            {[data.tip1, data.tip2, data.tip3].filter(tip => tip.trim()).map((tip, index) => (
-              <div key={index} className="flex items-start gap-3 print:gap-2">
-                <div className="w-6 h-6 bg-brand-orange text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 print:w-5 print:h-5 print:text-xs">
-                  {index + 1}
-                </div>
-                <p className="text-brand-navy text-sm pt-0.5 print:text-xs print:pt-0">{tip}</p>
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center">
+            <div className="text-center mb-6">
+              <TrendingUp className="h-16 w-16 text-brand-blue mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-brand-orange">Performance Quality</h3>
+            </div>
+            <div className="w-40 h-40 bg-brand-blue rounded-full flex items-center justify-center">
+              <span className="text-5xl font-bold text-white">{data.qualityPercentage}%</span>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 print:gap-2">
-        {/* Project Section */}
-        {data.projectTitle && (
-          <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-            <div className="space-y-4 print:space-y-2">
-              <div className="text-center">
-                <Code className="h-8 w-8 text-brand-orange mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
-                <h3 className="text-lg font-bold text-brand-orange print:text-sm">PROJECT</h3>
+      {/* Page 3: Progress Since Last Session */}
+      <div className="report-page">
+        <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Progress Since Last Session</h2>
+        <div className="space-y-8 flex-1 flex flex-col justify-center">
+          {[data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(point => point.trim()).map((point, index) => (
+            <div key={index} className="flex items-start gap-6 p-6 bg-brand-light-blue/20 rounded-xl">
+              <div className="w-12 h-12 bg-brand-orange text-white rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0">
+                {index + 1}
               </div>
+              <p className="text-brand-navy text-lg pt-2">{point}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
+      {/* Page 4: Strengths & Areas of Improvement */}
+      <div className="report-page">
+        <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Strengths & Areas of Improvement</h2>
+        <div className="grid grid-cols-2 gap-8 h-full">
+          <div className="bg-green-50 p-6 rounded-xl">
+            <div className="text-center mb-6">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-2" />
+              <h3 className="text-2xl font-bold text-green-700">Strength Highlight</h3>
+            </div>
+            <p className="text-gray-700 text-lg leading-relaxed">{data.strengthText}</p>
+          </div>
+          
+          <div className="bg-blue-50 p-6 rounded-xl">
+            <div className="text-center mb-6">
+              <AlertCircle className="h-12 w-12 text-brand-blue mx-auto mb-2" />
+              <h3 className="text-2xl font-bold text-brand-blue">Area for Improvement</h3>
+            </div>
+            <div className="space-y-4">
               <div>
-                <h4 className="text-lg font-bold text-brand-blue mb-2 print:text-sm print:mb-1">{data.projectTitle}</h4>
-                <div className="space-y-2 print:space-y-1">
-                  <p className="text-brand-navy text-sm print:text-xs">1. {data.studentName} worked on {data.projectTitle}.</p>
-                  <p className="text-brand-navy text-sm print:text-xs">2. Implemented basic logic with AI input/output.</p>
-                  <p className="text-brand-navy text-sm print:text-xs">3. Code debugged with instructor support.</p>
+                <h4 className="font-semibold text-red-600 mb-2">Issue:</h4>
+                <p className="text-gray-700">{data.improvementIssue}</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-green-600 mb-2">Solution:</h4>
+                <p className="text-gray-700">{data.improvementSolution}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Page 5: Communication Tips & Project */}
+      <div className="report-page">
+        <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Communication Tips & Project Details</h2>
+        <div className="grid grid-cols-2 gap-8 h-full">
+          <div>
+            <div className="text-center mb-6">
+              <MessageSquare className="h-12 w-12 text-brand-orange mx-auto mb-2" />
+              <h3 className="text-2xl font-bold text-brand-orange">Communication Tips</h3>
+            </div>
+            <div className="space-y-4">
+              {[data.tip1, data.tip2, data.tip3].filter(tip => tip.trim()).map((tip, index) => (
+                <div key={index} className="flex items-start gap-4">
+                  <div className="w-8 h-8 bg-brand-orange text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                    {index + 1}
+                  </div>
+                  <p className="text-brand-navy text-lg pt-1">{tip}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+          
+          {data.projectTitle && (
+            <div>
+              <div className="text-center mb-6">
+                <Code className="h-12 w-12 text-brand-blue mx-auto mb-2" />
+                <h3 className="text-2xl font-bold text-brand-blue">Project</h3>
               </div>
-
-              <div>
-                <h4 className="text-base font-bold text-brand-blue mb-2 print:text-xs print:mb-1">Key Features:</h4>
-                <div className="space-y-1">
-                  {data.projectFeatures.filter(feature => feature.trim()).slice(0, 3).map((feature, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <div className="w-4 h-4 bg-brand-blue text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                        ○
+              <div className="space-y-4">
+                <h4 className="text-xl font-bold text-brand-navy">{data.projectTitle}</h4>
+                <div className="space-y-2">
+                  {data.projectFeatures.filter(feature => feature.trim()).map((feature, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-brand-blue text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
+                        •
                       </div>
-                      <p className="text-brand-navy text-sm print:text-xs">{feature}</p>
+                      <p className="text-brand-navy">{feature}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          </Card>
-        )}
-
-        {/* Parent Recommendations */}
-        <Card className="p-8 bg-white border-2 border-brand-light-blue print:p-3">
-          <div className="space-y-4 print:space-y-2">
-            <div className="text-center">
-              <Users className="h-8 w-8 text-brand-orange mx-auto mb-2 print:h-6 print:w-6 print:mb-1" />
-              <h3 className="text-lg font-bold text-brand-orange print:text-sm">PARENT RECOMMENDATION</h3>
-            </div>
-            <p className="text-sm text-brand-navy leading-relaxed print:text-xs">{data.recommendations}</p>
-          </div>
-        </Card>
+          )}
+        </div>
       </div>
 
-      {/* Footer */}
-      <Card className="p-6 bg-gradient-to-r from-brand-navy to-brand-blue text-white text-center print:p-3">
-        <div className="space-y-3 print:space-y-2">
-          <p className="text-lg font-semibold text-brand-orange print:text-sm">
-            "Thank you for your trust in our educational program."
-          </p>
-          
-          <div className="flex items-center justify-center gap-3 print:gap-2">
-            <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center print:w-6 print:h-6">
-              <GraduationCap className="h-6 w-6 text-white print:h-4 print:w-4" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold print:text-sm">ISKY TECH</h3>
-              <p className="text-xs opacity-80">EMPOWERING INNOVATORS</p>
-            </div>
+      {/* Page 6: Parent Recommendations */}
+      <div className="report-page">
+        <h2 className="text-3xl font-bold text-brand-navy mb-8 text-center">Parent Recommendations</h2>
+        <div className="flex flex-col items-center justify-center h-full">
+          <div className="text-center mb-8">
+            <Users className="h-16 w-16 text-brand-orange mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-brand-orange">Supporting Learning at Home</h3>
+          </div>
+          <div className="bg-brand-light-blue/20 p-8 rounded-xl max-w-4xl">
+            <p className="text-brand-navy text-lg leading-relaxed text-center">{data.recommendations}</p>
           </div>
           
-          <div className="pt-2 border-t border-white/20 print:pt-1">
-            <p className="text-sm font-semibold print:text-xs">Report Prepared by Quality Control Team</p>
+          {/* Footer */}
+          <div className="mt-12 text-center">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-brand-orange rounded-lg flex items-center justify-center">
+                <GraduationCap className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-brand-navy">ISKY TECH</h3>
+                <p className="text-brand-blue font-semibold">EMPOWERING INNOVATORS</p>
+              </div>
+            </div>
+            <p className="text-brand-orange font-semibold">"Thank you for your trust in our educational program."</p>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Action Buttons */}
-      <div className="text-center space-y-4 print:hidden">
+      <div className="text-center space-y-4 print:hidden py-8">
         <div className="flex justify-center gap-4">
           <Button
-            onClick={handleDownload}
-            className="bg-brand-blue hover:bg-brand-navy text-white px-8 py-3 text-lg"
+            onClick={handlePDFDownload}
+            className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 text-lg"
           >
-            <Download className="mr-2 h-5 w-5" />
-            Download Report
+            <FileText className="mr-2 h-5 w-5" />
+            Download PDF
+          </Button>
+          <Button
+            onClick={handlePowerPointDownload}
+            className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg"
+          >
+            <Presentation className="mr-2 h-5 w-5" />
+            Download PowerPoint
           </Button>
           <Button
             onClick={onBack}

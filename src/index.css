@@ -33,6 +33,38 @@
   .print-tiny-text {
     font-size: 8px !important;
   }
+  
+  .report-page {
+    page-break-after: always;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .report-page:last-child {
+    page-break-after: avoid;
+  }
+}
+
+/* 16:9 Aspect Ratio Pages */
+.report-page {
+  aspect-ratio: 16/9;
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+@media screen {
+  .report-page {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* ISKY TECH Design System - Professional education reporting theme */

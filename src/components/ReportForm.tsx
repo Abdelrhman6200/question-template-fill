@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { FileText, Upload } from "lucide-react";
+import { FileText, Upload, ImageIcon, User } from "lucide-react";
 
 interface ReportData {
   // Student Information
@@ -15,6 +15,7 @@ interface ReportData {
   track: string;
   sessionNumber: string;
   sessionDate: string;
+  studentPhoto?: string;
   
   // Performance
   qualityPercentage: number;
@@ -56,6 +57,7 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
     track: "",
     sessionNumber: "",
     sessionDate: "",
+    studentPhoto: "",
     qualityPercentage: 80,
     performanceNotes: ["", "", ""],
     progressPoint1: "",
@@ -81,6 +83,18 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
       ...prev,
       [field]: prev[field].map((item, i) => i === index ? value : item)
     }));
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        handleInputChange("studentPhoto", result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -146,7 +160,7 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
                 required
               />
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2">
               <Label htmlFor="sessionDate">Session Date</Label>
               <Input
                 id="sessionDate"
@@ -155,6 +169,36 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
                 onChange={(e) => handleInputChange("sessionDate", e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="studentPhoto">Student Photo (Optional)</Label>
+              <div className="flex items-center gap-4">
+                <Input
+                  id="studentPhoto"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-brand-navy"
+                />
+                {formData.studentPhoto && (
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src={formData.studentPhoto} 
+                      alt="Student preview" 
+                      className="w-12 h-12 rounded-full object-cover border-2 border-brand-light-blue"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleInputChange("studentPhoto", "")}
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
