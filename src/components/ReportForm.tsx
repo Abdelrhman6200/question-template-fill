@@ -11,6 +11,7 @@ import { FileText, Upload } from "lucide-react";
 interface ReportData {
   // Student Information
   studentName: string;
+  studentPhoto?: string;
   instructorName: string;
   track: string;
   sessionNumber: string;
@@ -52,6 +53,7 @@ interface ReportFormProps {
 export function ReportForm({ onGenerateReport }: ReportFormProps) {
   const [formData, setFormData] = useState<ReportData>({
     studentName: "",
+    studentPhoto: "",
     instructorName: "",
     track: "",
     sessionNumber: "",
@@ -81,6 +83,18 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
       ...prev,
       [field]: prev[field].map((item, i) => i === index ? value : item)
     }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setFormData(prev => ({ ...prev, studentPhoto: result }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -114,6 +128,25 @@ export function ReportForm({ onGenerateReport }: ReportFormProps) {
                 placeholder="e.g., Salem Mohamed"
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="studentPhoto">Student Photo (Optional)</Label>
+              <Input
+                id="studentPhoto"
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-brand-navy"
+              />
+              {formData.studentPhoto && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.studentPhoto} 
+                    alt="Student preview" 
+                    className="w-16 h-16 rounded-full object-cover border-2 border-brand-light-blue"
+                  />
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="instructorName">Instructor Name</Label>

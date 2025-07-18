@@ -1,9 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { User, GraduationCap, MapPin, Calendar, Hash, TrendingUp, CheckCircle, AlertCircle, Lightbulb, MessageSquare, Code, Users, Download, FileText } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import PptxGenJS from "pptxgenjs";
 
 interface ReportData {
   studentName: string;
+  studentPhoto?: string;
   instructorName: string;
   track: string;
   sessionNumber: string;
@@ -38,6 +43,127 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  const exportToPDF = async () => {
+    const element = document.getElementById('report-content');
+    if (!element) return;
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const imgWidth = 210;
+    const pageHeight = 295;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save(`${data.studentName}_Session_${data.sessionNumber}_Report.pdf`);
+  };
+
+  const exportToPowerPoint = async () => {
+    const pptx = new PptxGenJS();
+    
+    // Slide 1: Header
+    const slide1 = pptx.addSlide();
+    slide1.background = { color: '1a365d' };
+    
+    slide1.addText('ISKY TECH', {
+      x: 1, y: 2, w: 8, h: 1.5,
+      fontSize: 48, bold: true, color: 'FFFFFF',
+      align: 'center'
+    });
+    
+    slide1.addText('Session Progress Report', {
+      x: 1, y: 3.5, w: 8, h: 1,
+      fontSize: 32, bold: true, color: 'f97316',
+      align: 'center'
+    });
+    
+    slide1.addText(formatDate(data.sessionDate), {
+      x: 1, y: 5, w: 8, h: 0.8,
+      fontSize: 24, color: 'FFFFFF',
+      align: 'center'
+    });
+
+    // Slide 2: Student Information
+    const slide2 = pptx.addSlide();
+    slide2.background = { color: 'FFFFFF' };
+    
+    slide2.addText('Student Information', {
+      x: 1, y: 0.5, w: 8, h: 1,
+      fontSize: 36, bold: true, color: '1a365d'
+    });
+    
+    slide2.addText(`Name: ${data.studentName}`, {
+      x: 1, y: 2, w: 8, h: 0.8,
+      fontSize: 24, color: '1a365d'
+    });
+    
+    slide2.addText(`Instructor: ${data.instructorName}`, {
+      x: 1, y: 2.8, w: 8, h: 0.8,
+      fontSize: 24, color: '1a365d'
+    });
+    
+    slide2.addText(`Track: ${data.track}`, {
+      x: 1, y: 3.6, w: 8, h: 0.8,
+      fontSize: 24, color: '1a365d'
+    });
+    
+    slide2.addText(`Session: ${data.sessionNumber}`, {
+      x: 1, y: 4.4, w: 8, h: 0.8,
+      fontSize: 24, color: '1a365d'
+    });
+
+    if (data.studentPhoto) {
+      slide2.addImage({
+        data: data.studentPhoto,
+        x: 7, y: 2, w: 1.5, h: 1.5
+      });
+    }
+
+    // Slide 3: Performance
+    const slide3 = pptx.addSlide();
+    slide3.background = { color: 'FFFFFF' };
+    
+    slide3.addText('Performance Assessment', {
+      x: 1, y: 0.5, w: 8, h: 1,
+      fontSize: 36, bold: true, color: '1a365d'
+    });
+    
+    slide3.addText(`Quality: ${data.qualityPercentage}%`, {
+      x: 1, y: 2, w: 8, h: 1,
+      fontSize: 32, bold: true, color: '2563eb'
+    });
+    
+    data.performanceNotes.filter(note => note.trim()).forEach((note, index) => {
+      slide3.addText(`• ${note}`, {
+        x: 1, y: 3 + (index * 0.8), w: 8, h: 0.8,
+        fontSize: 18, color: '1a365d'
+      });
+    });
+
+    pptx.writeFile({ fileName: `${data.studentName}_Session_${data.sessionNumber}_Report.pptx` });
   };
 
   const CircularProgress = ({ percentage }: { percentage: number }) => {
@@ -79,6 +205,25 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8 bg-gradient-to-br from-brand-light-blue/20 to-background">
+      {/* Export Buttons */}
+      <div className="flex justify-center gap-4 mb-8">
+        <Button
+          onClick={exportToPDF}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3"
+        >
+          <FileText className="mr-2 h-5 w-5" />
+          Export as PDF
+        </Button>
+        <Button
+          onClick={exportToPowerPoint}
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3"
+        >
+          <Download className="mr-2 h-5 w-5" />
+          Export as PowerPoint
+        </Button>
+      </div>
+
+      <div id="report-content">
       {/* Header */}
       <div className="text-center space-y-4 bg-gradient-to-r from-brand-navy to-brand-blue text-white p-8 rounded-lg">
         <div className="flex items-center justify-center gap-3">
@@ -141,7 +286,15 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
           <div className="flex items-center justify-center bg-brand-light-blue/30 rounded-lg p-6">
             <div className="text-center">
               <div className="flex items-center justify-center mb-4">
-                <User className="h-12 w-12 bg-brand-orange text-white rounded-full p-2" />
+                {data.studentPhoto ? (
+                  <img 
+                    src={data.studentPhoto} 
+                    alt="Student" 
+                    className="h-20 w-20 rounded-full object-cover border-4 border-brand-orange"
+                  />
+                ) : (
+                  <User className="h-12 w-12 bg-brand-orange text-white rounded-full p-2" />
+                )}
               </div>
               <h3 className="text-2xl font-bold text-brand-blue">STUDENT</h3>
               <h3 className="text-2xl font-bold text-brand-blue">INFORMATION</h3>
@@ -351,6 +504,8 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
           </div>
         </div>
       </Card>
+
+      </div>
 
       {/* Action Button */}
       <div className="text-center">
