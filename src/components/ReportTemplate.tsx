@@ -90,159 +90,286 @@ export function ReportTemplate({ data, onBack }: ReportTemplateProps) {
     const pptx = new PptxGenJS();
     pptx.layout = 'LAYOUT_16x9';
     
+    // Brand colors (ISKY TECH)
+    const brandNavy = '1a365d';
+    const brandBlue = '0ea5e9';
+    const brandOrange = 'f97316';
+    const brandLightBlue = 'bae6fd';
+    
     // Slide 1: Cover Page
     const slide1 = pptx.addSlide();
-    slide1.background = { color: '1a365d' };
+    slide1.background = { color: brandNavy };
+    
+    // Add gradient rectangle overlay
+    slide1.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 0, w: 10, h: 5.625,
+      fill: { color: brandBlue }
+    });
+    
+    // Company logo/icon placeholder
+    slide1.addShape(pptx.ShapeType.rect, {
+      x: 4.25, y: 1.5, w: 1.5, h: 1.5,
+      fill: { color: brandOrange },
+      line: { width: 0 }
+    });
+    
     slide1.addText('ISKY TECH', {
-      x: 1, y: 2, w: 8, h: 1.5,
-      fontSize: 48, bold: true, color: 'FFFFFF', align: 'center'
+      x: 0, y: 1.8, w: 10, h: 1.2,
+      fontSize: 54, bold: true, color: 'FFFFFF', align: 'center',
+      fontFace: 'Arial'
     });
+    
     slide1.addText('Session Progress Report', {
-      x: 1, y: 3.5, w: 8, h: 1,
-      fontSize: 32, bold: true, color: 'f97316', align: 'center'
+      x: 0, y: 3.2, w: 10, h: 0.8,
+      fontSize: 36, bold: true, color: brandOrange, align: 'center',
+      fontFace: 'Arial'
     });
+    
     slide1.addText(formatDate(data.sessionDate), {
-      x: 1, y: 5, w: 8, h: 0.8,
-      fontSize: 24, color: 'FFFFFF', align: 'center'
+      x: 0, y: 4.2, w: 10, h: 0.6,
+      fontSize: 24, color: 'FFFFFF', align: 'center',
+      fontFace: 'Arial'
     });
 
     // Slide 2: Student Information
     const slide2 = pptx.addSlide();
     slide2.background = { color: 'FFFFFF' };
+    
+    // Header with background
+    slide2.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 0, w: 10, h: 1.2,
+      fill: { color: brandLightBlue },
+      line: { width: 0 }
+    });
+    
     slide2.addText('Student Information', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: '1a365d'
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandNavy,
+      fontFace: 'Arial'
     });
-    slide2.addText(`Name: ${data.studentName}\nInstructor: ${data.instructorName}\nTrack: ${data.track}\nSession: ${data.sessionNumber}`, {
-      x: 1, y: 2, w: 6, h: 3,
-      fontSize: 24, color: '1a365d'
+    
+    // Student details with styled boxes
+    slide2.addShape(pptx.ShapeType.rect, {
+      x: 0.5, y: 1.5, w: 6, h: 3.5,
+      fill: { color: 'f8fafc' },
+      line: { color: brandBlue, width: 2 }
     });
+    
+    slide2.addText(`👤 Name: ${data.studentName}`, {
+      x: 1, y: 2, w: 5, h: 0.5,
+      fontSize: 22, bold: true, color: brandNavy
+    });
+    
+    slide2.addText(`🎓 Instructor: ${data.instructorName}`, {
+      x: 1, y: 2.6, w: 5, h: 0.5,
+      fontSize: 20, color: brandNavy
+    });
+    
+    slide2.addText(`📚 Track: ${data.track}`, {
+      x: 1, y: 3.2, w: 5, h: 0.5,
+      fontSize: 20, color: brandNavy
+    });
+    
+    slide2.addText(`#️⃣ Session: ${data.sessionNumber}`, {
+      x: 1, y: 3.8, w: 5, h: 0.5,
+      fontSize: 20, color: brandNavy
+    });
+    
+    slide2.addText(`📅 Date: ${formatDate(data.sessionDate)}`, {
+      x: 1, y: 4.4, w: 5, h: 0.5,
+      fontSize: 20, color: brandNavy
+    });
+    
+    // Student photo area
     if (data.studentPhoto) {
-      slide2.addImage({ data: data.studentPhoto, x: 7.5, y: 2, w: 1.5, h: 1.5 });
+      slide2.addImage({ 
+        data: data.studentPhoto, 
+        x: 7.5, y: 2, w: 1.8, h: 1.8,
+        sizing: { type: 'crop', w: 1.8, h: 1.8 }
+      });
+    } else {
+      slide2.addShape(pptx.ShapeType.rect, {
+        x: 7.5, y: 2, w: 1.8, h: 1.8,
+        fill: { color: brandOrange },
+        line: { width: 0 }
+      });
+      slide2.addText('👤', {
+        x: 7.5, y: 2, w: 1.8, h: 1.8,
+        fontSize: 48, color: 'FFFFFF', align: 'center', valign: 'middle'
+      });
     }
 
     // Slide 3: Performance Assessment
     const slide3 = pptx.addSlide();
     slide3.background = { color: 'FFFFFF' };
-    slide3.addText('Performance Assessment', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: '1a365d'
+    
+    slide3.addShape(pptx.ShapeType.rect, {
+      x: 0, y: 0, w: 10, h: 1.2,
+      fill: { color: brandLightBlue },
+      line: { width: 0 }
     });
-    slide3.addText(`Quality: ${data.qualityPercentage}%`, {
-      x: 1, y: 2, w: 8, h: 1,
-      fontSize: 32, bold: true, color: '2563eb'
+    
+    slide3.addText('📊 Performance Assessment', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandNavy
     });
+    
+    // Quality score with visual circle
+    slide3.addShape(pptx.ShapeType.rect, {
+      x: 1, y: 1.8, w: 2.5, h: 2.5,
+      fill: { color: brandBlue },
+      line: { width: 0 }
+    });
+    
+    slide3.addText(`${data.qualityPercentage}%`, {
+      x: 1, y: 1.8, w: 2.5, h: 2.5,
+      fontSize: 36, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle'
+    });
+    
+    slide3.addText('Quality Score', {
+      x: 4, y: 2.2, w: 5, h: 0.8,
+      fontSize: 28, bold: true, color: brandNavy
+    });
+    
+    slide3.addText(`The student achieved ${data.qualityPercentage}% quality in today's session`, {
+      x: 4, y: 3, w: 5, h: 1,
+      fontSize: 18, color: brandNavy
+    });
+    
+    // Performance notes
     data.performanceNotes.filter(note => note.trim()).forEach((note, index) => {
-      slide3.addText(`• ${note}`, {
-        x: 1, y: 3 + (index * 0.8), w: 8, h: 0.8,
-        fontSize: 18, color: '1a365d'
+      slide3.addText(`✓ ${note}`, {
+        x: 1, y: 4.5 + (index * 0.4), w: 8, h: 0.4,
+        fontSize: 16, color: brandNavy
       });
     });
 
     // Slide 4: Progress Since Last Session
     const slide4 = pptx.addSlide();
     slide4.background = { color: 'FFFFFF' };
-    slide4.addText('Progress Since Last Session', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: 'f97316'
+    
+    slide4.addText('📈 Progress Since Last Session', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandOrange
     });
+    
     [data.progressPoint1, data.progressPoint2, data.progressPoint3].filter(point => point.trim()).forEach((point, index) => {
       slide4.addText(`${index + 1}. ${point}`, {
         x: 1, y: 2 + (index * 1), w: 8, h: 0.8,
-        fontSize: 20, color: '1a365d'
+        fontSize: 20, color: brandNavy
       });
     });
 
     // Slide 5: Strength Highlights
     const slide5 = pptx.addSlide();
     slide5.background = { color: 'FFFFFF' };
-    slide5.addText('Strength Highlights', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: 'f97316'
+    
+    slide5.addText('💪 Strength Highlights', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandOrange
     });
+    
     slide5.addText(data.strengthText, {
-      x: 1, y: 2, w: 8, h: 3,
-      fontSize: 18, color: '1a365d'
+      x: 1.5, y: 2.2, w: 7, h: 1.7,
+      fontSize: 20, color: brandNavy
     });
 
     // Slide 6: Areas of Improvement
     const slide6 = pptx.addSlide();
     slide6.background = { color: 'FFFFFF' };
-    slide6.addText('Areas of Improvement', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: '2563eb'
+    
+    slide6.addText('🎯 Areas of Improvement', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandBlue
     });
-    slide6.addText(`Issue: ${data.improvementIssue}\n\nSolution: ${data.improvementSolution}`, {
-      x: 1, y: 2, w: 8, h: 3,
-      fontSize: 18, color: '1a365d'
+    
+    slide6.addText(`❗ Issue: ${data.improvementIssue}`, {
+      x: 1, y: 2, w: 8, h: 0.8,
+      fontSize: 18, color: brandNavy
+    });
+    
+    slide6.addText(`💡 Solution: ${data.improvementSolution}`, {
+      x: 1, y: 3.4, w: 8, h: 0.8,
+      fontSize: 18, color: brandNavy
     });
 
     // Slide 7: Communication Tips
     const slide7 = pptx.addSlide();
     slide7.background = { color: 'FFFFFF' };
-    slide7.addText('Communication Tips', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: 'f97316'
+    
+    slide7.addText('💬 Communication Tips', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandOrange
     });
+    
     [data.tip1, data.tip2, data.tip3].filter(tip => tip.trim()).forEach((tip, index) => {
       slide7.addText(`${index + 1}. ${tip}`, {
-        x: 1, y: 2 + (index * 0.8), w: 8, h: 0.8,
-        fontSize: 20, color: '1a365d'
+        x: 1, y: 1.9 + (index * 1), w: 8, h: 0.6,
+        fontSize: 18, color: brandNavy
       });
     });
 
     // Slide 8: Project Information
     const slide8 = pptx.addSlide();
     slide8.background = { color: 'FFFFFF' };
-    slide8.addText('Project Information', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: '1a365d'
+    
+    slide8.addText('🚀 Project Information', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandNavy
     });
-    slide8.addText(`Project: ${data.projectTitle}`, {
-      x: 1, y: 2, w: 8, h: 1,
-      fontSize: 24, bold: true, color: '2563eb'
+    
+    slide8.addText(`📝 Project: ${data.projectTitle}`, {
+      x: 1.2, y: 2, w: 7.6, h: 0.4,
+      fontSize: 24, bold: true, color: brandBlue
     });
+    
     data.projectFeatures.filter(feature => feature.trim()).forEach((feature, index) => {
-      slide8.addText(`• ${feature}`, {
-        x: 1, y: 3 + (index * 0.8), w: 8, h: 0.8,
-        fontSize: 18, color: '1a365d'
+      slide8.addText(`✨ ${feature}`, {
+        x: 1, y: 2.8 + (index * 0.4), w: 8, h: 0.4,
+        fontSize: 16, color: brandNavy
       });
     });
 
-    // Slide 9: Project Screenshot (placeholder)
+    // Slide 9: Project Screenshot
     const slide9 = pptx.addSlide();
     slide9.background = { color: 'FFFFFF' };
-    slide9.addText('Project Screenshot', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: 'f97316'
+    
+    slide9.addText('📸 Project Screenshot', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandOrange
     });
-    slide9.addText('Screenshot of the project will be displayed here', {
-      x: 1, y: 3, w: 8, h: 1,
-      fontSize: 20, color: '1a365d', align: 'center'
+    
+    slide9.addText('🖼️\nProject Screenshot\nwill be displayed here', {
+      x: 2, y: 2, w: 6, h: 2.5,
+      fontSize: 20, color: brandNavy, align: 'center', valign: 'middle'
     });
 
     // Slide 10: Parent Recommendations
     const slide10 = pptx.addSlide();
     slide10.background = { color: 'FFFFFF' };
-    slide10.addText('Parent Recommendations', {
-      x: 1, y: 0.5, w: 8, h: 1,
-      fontSize: 36, bold: true, color: '2563eb'
+    
+    slide10.addText('👨‍👩‍👧‍👦 Parent Recommendations', {
+      x: 0.5, y: 0.2, w: 9, h: 0.8,
+      fontSize: 42, bold: true, color: brandBlue
     });
+    
     slide10.addText(data.recommendations, {
-      x: 1, y: 2, w: 8, h: 3,
-      fontSize: 18, color: '1a365d'
+      x: 1.5, y: 2.2, w: 7, h: 1.7,
+      fontSize: 18, color: brandNavy
     });
 
     // Slide 11: Thank You
     const slide11 = pptx.addSlide();
-    slide11.background = { color: '1a365d' };
-    slide11.addText('Thank You', {
-      x: 1, y: 2.5, w: 8, h: 1.5,
-      fontSize: 48, bold: true, color: 'FFFFFF', align: 'center'
+    slide11.background = { color: brandNavy };
+    
+    slide11.addText('Thank You!', {
+      x: 0, y: 2, w: 10, h: 1.5,
+      fontSize: 54, bold: true, color: 'FFFFFF', align: 'center'
     });
+    
     slide11.addText('ISKY TECH', {
-      x: 1, y: 4, w: 8, h: 1,
-      fontSize: 32, bold: true, color: 'f97316', align: 'center'
+      x: 0, y: 4, w: 10, h: 0.6,
+      fontSize: 32, bold: true, color: brandOrange, align: 'center'
     });
 
     pptx.writeFile({ fileName: `${data.studentName}_Session_${data.sessionNumber}_Report.pptx` });
